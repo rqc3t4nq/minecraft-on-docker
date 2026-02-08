@@ -1,0 +1,1 @@
+Implementation of [this article](https://dexterslog.com/posts/self-hosting-minecraft-server-in-docker/)

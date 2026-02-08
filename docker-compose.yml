@@ -1,0 +1,35 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    # run as user dockermc (1001) and its group (1001)
+    user: "1001:1001"
+    # limit the max memory and number of CPUs the container can use
+    mem_limit: "1.8g"
+    cpus: "1.0"
+    restart: "unless-stopped"
+    ports:
+      - "30000:25565/tcp"
+    environment:
+      EULA: "TRUE"
+      TYPE: "VANILLA"
+      VERSION: "1.21.4"
+      ONLINE_MODE: "TRUE"
+      INIT_MEMORY: "1.5G"
+      MAX_MEMORY: "1.7G"
+      MODE: "creative"
+      DIFFICULTY: "easy"
+      PVP: "FALSE"
+      MAX_PLAYERS: 5
+      # always restore the whitelist with users set via env variable
+      #EXISTING_WHITELIST_FILE: "SYNCHRONIZE"
+      #WHITELIST: |
+      #  YouPlayerName
+      #  FriendsPlayerName        
+      # always restore the ops with users set via env variables
+      #EXISTING_OPS_FILE: "SYNCHRONIZE"
+      #OPS: |
+      #  YouPlayerName        
+      SNOOPER_ENABLED: "FALSE"
+
+    volumes:
+      - ./data:/data

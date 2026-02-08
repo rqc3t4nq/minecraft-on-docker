@@ -1,0 +1,35 @@
+name: Deploy over SSH
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write # to be able to publish a GitHub release
+  issues: write # to be able to comment on released issues
+  pull-requests: write # to be able to comment on released pull requests
+  id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: firstbyte
+      url: https://github.com/detilol/minecraft-on-docker/settings/environments
+    if: github.ref == 'refs/heads/master'
+    container:
+      image: skipero/neat-ci:latest
+    env:
+      SSH_URL: ${{ secrets.SSH_URL }}/${{ github.head_ref || github.ref_name }}/
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+      - name: Stop docker compose on target server 
+        run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL 'docker compose down'
+        continue-on-error: true
+      - name: Upload to target server
+        if: ${{ always() }}
+        run: npx uzdu upload ssh ./docker-compose.yml $SSH_URL
+      - name: Start docker compose on target server 
+        run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL 'docker compose up -d'
+
