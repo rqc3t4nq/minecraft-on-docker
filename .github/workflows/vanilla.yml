@@ -36,7 +36,7 @@ jobs:
       - name: Stop docker compose on target server
         run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "docker compose down"
         continue-on-error: true
-      - name: Create file ${{ env.SOURCE_PATH }}/.env
+      - name: Create file .env
         if: always()
         run: |
           cat <<EOF > ${{ env.SOURCE_PATH }}/.env
@@ -46,5 +46,5 @@ jobs:
         if: ${{ always() }}
         run: npx uzdu upload ssh '${{ env.SOURCE_PATH }}' '${{ env.SSH_URL }}'
       - name: Start docker compose on target server
-        run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "cp -a rootfiles/. data/ || true; docker compose up -d"
+        run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "docker compose up -d"
 
