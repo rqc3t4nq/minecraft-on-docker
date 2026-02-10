@@ -26,6 +26,7 @@ jobs:
     env:
       SSH_URL: ${{ secrets.SSH_URL }}/${{ github.head_ref || github.ref_name }}/
       MC_VERSION: ${{ inputs.minecraft_version }}
+      SOURCE_PATH: ./recipes/vanilla
 
     steps:
       - name: Checkout source code
@@ -33,13 +34,17 @@ jobs:
         with:
           ref: ${{ github.ref }}
       - name: Stop docker compose on target server
-        run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL 'docker compose down'
+        run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "docker compose down"
         continue-on-error: true
+      - name: Create file ${{ env.SOURCE_PATH }}/.env
+        if: always()
+        run: |
+          cat <<EOF > ${{ env.SOURCE_PATH }}/.env
+          VERSION=${{ env.MC_VERSION }}
+          EOF
       - name: Upload to target server
         if: ${{ always() }}
-        env:
-          command: docker compose up -d -e VERSION=${{ env.MC_VERSION }} 
-        run: npx uzdu upload ssh ./recipes/1 $SSH_URL
+        run: npx uzdu upload ssh '${{ env.SOURCE_PATH }}' '${{ env.SSH_URL }}'
       - name: Start docker compose on target server 
-        run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL "docker compose up -d -e VERSION=$MC_VERSION"
+        run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "docker compose up -d"
 
