@@ -1,6 +1,13 @@
-name: Deploy over SSH
+name: Minecraft (vanilla)
 on:
   workflow_dispatch:
+    inputs:
+      minecraft_version:
+        description: Minecraft version, default 1.21.11
+        required: true
+        default: '1.21.11'
+        type: string
+
 
 permissions:
   contents: write # to be able to publish a GitHub release
@@ -18,18 +25,21 @@ jobs:
       image: skipero/neat-ci:latest
     env:
       SSH_URL: ${{ secrets.SSH_URL }}/${{ github.head_ref || github.ref_name }}/
+      MC_VERSION: ${{ inputs.minecraft_version }}
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v5
         with:
           ref: ${{ github.ref }}
-      - name: Stop docker compose on target server 
+      - name: Stop docker compose on target server
         run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL 'docker compose down'
         continue-on-error: true
       - name: Upload to target server
         if: ${{ always() }}
-        run: npx uzdu upload ssh ./docker-compose.yml $SSH_URL
+        env:
+          command: docker compose up -d -e VERSION=${{ env.MC_VERSION }} 
+        run: npx uzdu upload ssh ./recipes/1 $SSH_URL
       - name: Start docker compose on target server 
-        run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL 'docker compose up -d'
+        run: npx -y --package uzdu -- uzdu exec ssh $SSH_URL "docker compose up -d -e VERSION=$MC_VERSION"
 

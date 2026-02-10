@@ -4,18 +4,24 @@ services:
     # run as user dockermc (1001) and its group (1001)
     user: "1001:1001"
     # limit the max memory and number of CPUs the container can use
-    mem_limit: 1.8g
-    cpus: 1
+    #mem_limit: 1900M
+    #cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 1900M
+          cpus: 1
+        reservations:
+          memory: 1600M
     restart: unless-stopped
     ports:
       - "25565:25565"
     environment:
       EULA: TRUE
       TYPE: VANILLA
-      VERSION: "1.21.11"
       ONLINE_MODE: TRUE
-      INIT_MEMORY: 1.5G
-      MAX_MEMORY: 1.7G
+      INIT_MEMORY: 1500M
+      MAX_MEMORY: 1800M
       MODE: creative
       DIFFICULTY: easy
       PVP: FALSE
@@ -32,6 +38,12 @@ services:
       #OPS: |
       #  YouPlayerName        
       SNOOPER_ENABLED: FALSE
+      #server.properties https://minecraft.wiki/w/Server.properties
+      #MOTD (Message of the day) https://minecraft.wiki/w/Formatting_codes
+      MOTD: |
+        §c§lMinecraft§r§r Ивана
+        тип %TYPE%, версия %VERSION%
 
     volumes:
       - ./data:/data
+      - ./server-icon.png:/server-icon.png
