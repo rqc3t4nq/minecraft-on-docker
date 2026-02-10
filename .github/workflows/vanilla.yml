@@ -45,6 +45,6 @@ jobs:
       - name: Upload to target server
         if: ${{ always() }}
         run: npx uzdu upload ssh '${{ env.SOURCE_PATH }}' '${{ env.SSH_URL }}'
-      - name: Start docker compose on target server 
-        run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "docker compose up -d"
+      - name: Start docker compose on target server
+        run: npx -y --package uzdu -- uzdu exec ssh '${{ env.SSH_URL }}' "cp -a rootfiles/. data/ || true; docker compose up -d"
 
