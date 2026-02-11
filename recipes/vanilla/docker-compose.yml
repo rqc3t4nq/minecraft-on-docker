@@ -30,14 +30,13 @@ services:
       #TYPE: FORGE
       #FORGE_INSTALLER_URL: https://github.com/CleanroomMC/Cleanroom/releases/download/0.2.4-alpha/cleanroom-0.2.4-alpha-installer.jar
       # always restore the whitelist with users set via env variable
-      #EXISTING_WHITELIST_FILE: "SYNCHRONIZE"
-      #WHITELIST: |
-      #  YouPlayerName
-      #  FriendsPlayerName        
+      EXISTING_WHITELIST_FILE: SYNCHRONIZE
+      WHITELIST: |
+        itranga     
       # always restore the ops with users set via env variables
-      #EXISTING_OPS_FILE: "SYNCHRONIZE"
-      #OPS: |
-      #  YouPlayerName        
+      EXISTING_OPS_FILE: SYNCHRONIZE
+      OPS: |
+        itranga
       SNOOPER_ENABLED: FALSE
       #server.properties https://minecraft.wiki/w/Server.properties
       #MOTD (Message of the day) https://minecraft.wiki/w/Formatting_codes
